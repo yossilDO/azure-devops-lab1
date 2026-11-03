@@ -1,0 +1,30 @@
+name: 'Terraform & PowerShell CI/CD'
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. משיכת הקוד מ-GitHub
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # 2. הרצת סקריפט ה-PowerShell
+    - name: Run PowerShell Script
+      shell: pwsh
+      run: |
+        ./scripts/Test-AzureConfig.ps1
+
+    # 3. התקנת Terraform בתוך הענן של GitHub
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    # 4. בדיקת תקינות הקוד של Terraform
+    - name: Terraform Init & Validate
+      run: |
+        terraform init -backend=false
+        terraform validate
